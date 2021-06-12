@@ -1,0 +1,36 @@
+<%- include('partials/header'); -%>
+<div class="container container-catalogue">
+    <div class="categories">
+        <div>Categories:</div>
+        <a href="/categories/cakes" class=" <% if (category === 'cakes') { %>
+        selected
+    <%} else { %>
+        ''
+        <% } %>">Cakes</a>
+        <a href="/categories/frozen" class=" <% if (category === 'frozen') { %>
+        selected
+    <%} else { %>
+        ''
+        <% } %>">Frozen Food</a>
+    </div>
+    <div class="catalogue">
+        <% items.map(item => { %>
+            <a href="/item/<%= item._id %>" class="item" >
+                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+                <div ><h2 class="itemname"><%=item.itemname %></h2></div>
+                <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> <%= price %></div>
+                <div class="desc">Order now!</div>
+            </a>
+            
+        <% }) %>
+        <% if (items == false) { %>
+            <div class="nomatch">There is no match for your input</div>
+            <% } %>
+    </div>
+</div>
+<script>
+    const price = document.querySelector('.price')
+    let currency = price.innerHTML
+    currency = currency.substr(0, currency.length - 3)
+    const digit = Number(currency.replace(/\D/g,''))
+</script>

@@ -1,0 +1,66 @@
+<%- include('partials/header'); -%>
+
+<form action="" class="signup">
+    <h2>Signup</h2>
+    <label for="email">Email</label>
+    <input type="text" name="email" required>
+    <div class="email error"></div>
+    <label for="name">Full Name</label>
+    <input type="text" name="name" required>
+    <div class="name error"></div>
+    <label for="password">Password</label>
+    <input type="password" name="password">
+    <div class="password error"></div>
+    <h3>Address</h3>
+    <label for="city">City</label>
+    <input type="text" name="city" required>
+    <div class="city error"></div>
+    <label for="address">Address Details</label>
+    <textarea name="address" id="" cols="30" rows="10"></textarea>
+    <div class="address error"></div>
+    <button type="submit">Submit</button>
+    <div class="success"></div>
+</form>
+
+<script>
+    const signup = document.querySelector('.signup')
+    const emailError = document.querySelector('.email.error')
+    const nameError = document.querySelector('.name.error')
+    const passwordError = document.querySelector('.password.error')
+    const addressError = document.querySelector('.address.error')
+    const cityError = document.querySelector('.city.error')
+    const success = document.querySelector('.success')
+    signup.addEventListener('submit', async function(e){
+        e.preventDefault()
+        const email = signup.email.value
+        const fullname = signup.name.value
+        const password = signup.password.value
+        const city = signup.city.value
+        const address = signup.address.value
+
+        try {
+            const res = await fetch('/signup',{
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, fullname, password, address: { city: city, detail: address}})
+            })
+            const data = await res.json()
+            console.log(data)
+            if (data.errors){
+                emailError.innerHTML = data.errors.email
+                passwordError.innerHTML = data.errors.password
+            }
+            else{
+                success.innerHTML = 'item successfully added!'
+                emailError.innerHTML = ''
+                passwordError.innerHTML = ''
+                signup.reset()
+                window.location.assign('/login')
+            }
+        } 
+        catch (err) {
+            console.log(err)
+        }
+    })
+</script>
+<%- include('partials/footer'); -%>

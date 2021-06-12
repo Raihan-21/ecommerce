@@ -1,0 +1,76 @@
+<%- include('partials/header'); -%>
+
+<form action="" class="inputitem">
+    <label for="itemname">Product Name</label>
+    <input type="text" name="itemname">
+    <div class="itemname error"></div>
+    <label for="category">Category</label>
+    <input type="text" name="category" id="">
+    <div class="category error"></div>
+    <label for="price">Price</label>
+    <input type="text" name="price" id="">
+    <div class="price error"></div>
+    <label for="desc">Description</label>
+    <textarea name="desc" id="" cols="50" rows="10"></textarea>
+    <div class="desc error"></div>
+    <label for="price">Quantity</label>
+    <input type="text" name="quantity" id="">
+    <div class="quantity error"></div>
+    <label for="img">Image</label>
+    <input type="file" id="img" name="img" accept="image/*">
+    <div class="img error"></div>
+    <div class="success"></div>
+    <button type="submit">Add Item</button>
+</form>
+<script>
+    const inputitem = document.querySelector('.inputitem')
+    const itemnameError = document.querySelector('.itemname.error')
+    const categoryError = document.querySelector('.category.error')
+    const priceError = document.querySelector('.price.error')
+    const quantityError = document.querySelector('.quantity.error')
+    const success = document.querySelector('.success')
+    inputitem.addEventListener('submit', async function(e){
+        e.preventDefault()
+        const formData = new FormData();
+        formData.append('itemname', inputitem.itemname.value )
+        formData.append('category', inputitem.category.value )
+        formData.append('price', inputitem.price.value )
+        formData.append('desc', inputitem.desc.value )
+        formData.append('quantity', inputitem.quantity.value )
+        formData.append('image', inputitem.img.files[0] )
+        // let itemname = inputitem.itemname.value
+        // let category = inputitem.category.value
+        // let price = inputitem.price.value
+        // let quantity = inputitem.quantity.value
+        // let image = inputitem.img.files
+        // console.log(image)
+        try{
+            const res = await fetch('/inputitem', {
+            method: 'POST',
+            body: formData
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.errors){
+                success.innerHTML = ''
+                itemnameError.innerHTML = data.errors.itemname
+                categoryError.innerHTML = data.errors.category
+                priceError.innerHTML = data.errors.price
+                quantityError.innerHTML = data.errors.quantity
+            }
+            else{
+                success.innerHTML = 'item successfully added!'
+                itemnameError.innerHTML = ''
+                categoryError.innerHTML = ''
+                priceError.innerHTML = ''
+                quantityError.innerHTML =''
+            }
+            
+        }
+        catch(err){
+            console.log(err)
+        }
+        inputitem.reset()
+    })
+    
+</script>

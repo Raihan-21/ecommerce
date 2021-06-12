@@ -1,0 +1,52 @@
+<%- include('partials/header'); -%>
+
+<form action="" class="login">
+    <h2>Login</h2>
+    <label for="email">Email</label>
+    <input type="text" name="email" required>
+    <div class="email error"></div>
+    <label for="password">Password</label>
+    <input type="password" name="password">
+    <div class="password error"></div>
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    const login = document.querySelector('.login')
+    const emailError = document.querySelector('.email.error')
+    const passwordError = document.querySelector('.password.error')
+    login.addEventListener('submit', async function(e){
+        e.preventDefault()
+        const email = login.email.value
+        const password = login.password.value
+
+        try {
+            const res = await fetch('/login',{
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, password: password})
+            })
+            const data = await res.json()
+            console.log(data)
+            if (data.errors){
+                emailError.innerHTML = data.errors.email
+                passwordError.innerHTML = data.errors.password
+            }
+            else{
+                const referrer = document.referrer
+                if(referrer == 'http://localhost:3000/signup'){
+                    window.location.assign('/')
+                }
+                else{
+                    window.location.href = referrer
+                }
+                emailError.innerHTML = ''
+                passwordError.innerHTML = ''
+            }
+        } 
+        catch (err) {
+            console.log(err)
+        }
+    })
+</script>
+<%- include('partials/footer'); -%>

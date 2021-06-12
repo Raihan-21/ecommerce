@@ -1,0 +1,22 @@
+<%- include('partials/header'); -%>
+<div class="purchases">
+    <h2>My Purchase</h2>
+    <% user.orders.map(order => { %>
+        <div class="purchase">
+            <p>Order ID: 173173</p>
+            <% order.item.map( cake => { %>
+                <div class="purchase-item">
+                    <div><%= cake.itemname %> : <%= cake.quantity %></div>
+                    <div><% cake.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cake.totalprice) %> <%= cake.totalprice %> </div>
+                </div>
+            <% }) %>
+            <div class="purchase-total">
+                <div>Total : </div>
+                <div><% order.total = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(order.total) %> <%= order.total %></div>
+                <div><%= order.total %></div>
+            </div>
+            
+        </div>
+    <% }) %>
+    
+</div>

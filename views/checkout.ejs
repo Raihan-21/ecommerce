@@ -1,0 +1,75 @@
+<%- include('partials/header'); -%>
+<div class="container checkout-container">
+    <div class="info">
+        <form class="">
+            <label for="name">Full Name</label>
+            <input type="text" name="name" value="<%= user.fullname %>" required>
+            <h3>Alamat</h3>
+            <label for="kota">Kota</label>
+            <input type="text" name="kota" value="<%= user.address.city %>" class="kota" required>
+            <label for="alamat">Alamat Lengkap</label>
+            <input type="text" name="alamat" value="<%= user.address.detail %>" class="alamat" required>
+            <button type="submit" class="submit">Confirm</button>
+        </form>
+        
+    </div>
+    <div class="payment">
+        <div class="itemwrap">
+        <% user.inventory.map(item => { %>
+            <div class="item" data-id="<%= item._id %>">
+                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+                <div class="itemdetails">
+                    <a href="/item/<%= item._id %>" class="itemname"><%= item.itemname %></a>
+                    <div class="upper">
+                        <div class="qty">Jumlah : <%= item.quantity %></div>
+                        <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> Harga: <%= price %></div>
+                        <h4 class="stok error"></h4>
+                    </div>
+                </div>
+                
+            </div>  
+            <% }) %>
+        </div>
+        <div class="total">
+            <h3>Detail Belanja</h3>
+            <p class="totalqty">Total Barang: <%= total.quantity %></p>
+            <p class="totalprice"><% total.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total.totalprice) %> Total Harga: <%= total.totalprice %></p>
+            <button class="back">Back</button>
+            <button class="cancel">Cancel</button>
+            <button class="pay">Pay</button>
+        </div>
+        
+    </div>
+    
+</div>
+
+
+<script>
+    const checkout = document.querySelector('.checkout-container')
+    const confirm = document.querySelector('.submit')
+    const back = document.querySelector('.back')
+    const pay = document.querySelector('.pay')
+    const cancel = document.querySelector('.cancel')
+    const kota = document.querySelector('.kota').value
+    const alamat = document.querySelector('.alamat').value
+    confirm.addEventListener('click', function(e){
+        e.preventDefault()
+        checkout.classList.add('confirm')
+    })
+    back.addEventListener('click', function(){
+        checkout.classList.remove('confirm')
+    })
+    cancel.addEventListener('click', function(){
+        window.location.assign('/cart')
+    })
+    pay.addEventListener('click', async function(){
+        const res = await fetch('/cart/checkout', {
+            method: 'DELETE',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({kota, alamat})
+        })
+        const data = await res.json();
+        console.log(data)
+        location.assign('/purchase')
+    })
+</script>

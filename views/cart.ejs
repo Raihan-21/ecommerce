@@ -1,0 +1,149 @@
+<%- include('partials/header'); -%>
+<div class="container cart">
+    <% if (user.inventory.length !== 0) { %>
+        <div class="itemwrap">
+            <h2>Cart</h2>
+        <% user.inventory.map(item => { %>
+            <div class="item" data-id="<%= item._id %>">
+                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+                <div class="itemdetails">
+                    <a href="/item/<%= item._id %>" class="itemname"><%= item.itemname %></a>
+                    <div class="upper">
+                        <button class="decre min" data-type="decre">-</button>
+                        <div class="qty"><%= item.quantity %></div>
+                        <button class="incre" data-type="incre">+</button>
+                        <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> Harga: <%= price %></div>
+                        <h4 class="stok error"></h4>
+                    </div>
+                <button class="delete">delete</button>
+                </div>
+                
+            </div>  
+            <% }) %>
+            <a href="/cart/checkout" class="checkout">Checkout</a>
+        </div>
+
+        <div class="total">
+            <h3>Detail Belanja</h3>
+            <p class="totalqty">Total Barang: <%= total.quantity %></p>
+            <p class="totalprice"><% total.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total.totalprice) %> Total Harga: <%= total.totalprice %></p>
+        </div>
+    <% } else { %>
+        <h3 class="empty">Tidak ada barang dalam keranjang</h3>
+        <div class="totalqty totalprice" style="display: none;"></div>
+    <% } %>
+    
+</div>
+<script>
+
+    const itemWrap = document.querySelectorAll('.item')
+    const totalQty = document.querySelector('.totalqty')
+    let qtyDigit = totalQty.innerHTML.slice(totalQty.innerHTML.lastIndexOf(' ') + 1)
+    const totalPrice = document.querySelector('.totalprice ')
+    let priceDigit = totalPrice.innerHTML
+    priceDigit = priceDigit.substr(0, priceDigit.length - 3)
+    let digit = parseInt(priceDigit.replace(/\D/g,''))
+  
+    itemWrap.forEach(item => {
+        const quantity = item.querySelector('.qty')
+        const increment = item.querySelector('.incre')
+        const decrement = item.querySelector('.decre')
+        const remove = item.querySelector('.delete')
+        const stokError = document.querySelector('.stok.error')
+        const itemid = item.dataset.id
+        const price = document.querySelector('.price')
+        // const qty = parseInt(quantity.value) 
+        let qty = parseInt(quantity.innerHTML)
+
+        if(qty !==  1){
+                decrement.classList.remove('min')
+            }
+        increment.addEventListener('click', async function(){
+            const modType = increment.dataset.type
+            const res = await fetch('/cart', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({itemid, qty, modType})
+            })            
+            item.classList.add('loading')
+            // setTimeout(async function(){
+            //     const userRes = await fetch('/cartapi')
+            //     const userData = await userRes.json()
+            //     item.classList.remove('loading')
+            //     userData.user.inventory.map(item => {
+            //         if(itemid == item._id){
+            //             quantity.innerHTML = item.quantity
+            //         }
+            //     })
+            // }, 200) 
+            const data = await res.json()
+            if(data){
+                setTimeout(async function(){
+                    item.classList.remove('loading')
+                    if(data.errors){
+                        stokError.innerHTML = data.errors.stock
+                    }
+                    else{
+                        qty++
+                        quantity.innerHTML = qty
+                        qtyDigit++
+                        totalQty.innerHTML = `Total Barang: ${qtyDigit}`
+                        cartPopup.innerHTML = qtyDigit
+                        if(qty !==  1){
+                            decrement.classList.remove('min')
+                        }
+                        console.log(digit)
+                        console.log(data.price)
+                        digit += data.price
+                        console.log(`setelah ditambah : ${digit}`)
+                        totalPrice.innerHTML = `Total Harga: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(digit)}`
+                        // price.innerHTML = `Harga: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(digit)}`
+                    };
+                }, 200) 
+            }
+                
+})
+        decrement.addEventListener('click', async function(){
+            const modType = decrement.dataset.type
+            const res = await fetch('/cart', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({itemid, qty, modType})
+            })
+            item.classList.add('loading')
+            const data = await res.json()
+            if(data){
+                setTimeout(async function(){
+                    item.classList.remove('loading')
+                    if(data.errors){
+                        stokError.innerHTML = data.errors.stock
+                    }
+                    else{
+                        qty--
+                        quantity.innerHTML = qty
+                        qtyDigit--
+                        totalQty.innerHTML = `Total Barang: ${qty}`
+                        cartPopup.innerHTML = qtyDigit
+                        if(quantity.innerHTML ==  '1'){
+                            decrement.classList.add('min')
+                        }
+                        digit -= data.price
+                        // price.innerHTML = `Harga: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(digit)}`
+                        totalPrice.innerHTML = `Total Harga: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(digit)}`
+                    };
+                }, 200) 
+            }
+            
+            })
+        remove.addEventListener('click', async function(){
+            const res = await fetch('/cart', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({itemid, qty})
+            });
+            const data = await res.json()
+            console.log(data)
+            window.location.reload()
+        })
+    })
+</script>

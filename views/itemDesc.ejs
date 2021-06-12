@@ -1,0 +1,90 @@
+<%- include('partials/header'); -%>
+<div class="container container-itemdesc" data-id="<%= item._id %>">
+    <div class="itemdesc">
+        <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+        <div class="details">
+            <h2><%= item.itemname %></h2>
+            <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> <%= price %></div>
+            <div><%= item.desc %></div>
+        </div>
+        
+    </div>
+    <div class="quantity">
+        <h3>Order</h3>
+        <div>stok : <%= item.quantity %></div>
+        <div class="upper">
+            <button class="decre min">-</button>
+            <input value="1" class="qtyinput"></input>
+            <button class="incre">+</button>
+        </div>
+        <h4 class="stok error"></h4>
+        <button class="submit">Add to Cart</button>
+    </div>
+    
+</div>
+
+<script>
+    const angka = document.querySelector('.qtyinput')
+    const increment = document.querySelector('.incre')
+    const decrement = document.querySelector('.decre')
+    const submit = document.querySelector('.submit')
+    const stokError = document.querySelector('.stok.error')
+    const container = document.querySelector('.container-itemdesc')
+
+        
+
+    // let jumlah = 1
+    increment.addEventListener('click', function(){
+        let jumlah = parseInt(angka.value)
+        jumlah++
+       angka.value = jumlah
+       if(angka.value !==  '1'){
+            decrement.classList.remove('min')
+        }
+    })
+    decrement.addEventListener('click', function(){
+        let jumlah = parseInt(angka.value)
+        jumlah--
+       angka.value = jumlah
+       if(angka.value ==  '1'){
+            decrement.classList.add('min')
+        }
+    })
+    submit.addEventListener('click', async function(){
+        const qty = parseInt(angka.value) 
+        const itemid = container.dataset.id
+        const user = <%- JSON.stringify(user) %>
+        if(user){
+            const res = await fetch('/cart', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({qty, itemid})
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.errors){
+                stokError.innerHTML = data.errors.stock
+            }
+            else{
+                let popupDigit = parseInt(cartPopup.innerHTML)
+                console.log(cartPopup.innerHTML)
+                stokError.innerHTML = data.sukses
+                if(cartPopup.innerHTML == ''){
+                    cartPopup.classList.remove('noitem')
+                    cartPopup.innerHTML = qty
+                }
+                else{
+                popupDigit += qty
+                
+                cartPopup.innerHTML = popupDigit
+                }
+
+            }
+        }
+        else{
+            window.location.assign('/login')
+        }
+        
+
+    })
+</script>

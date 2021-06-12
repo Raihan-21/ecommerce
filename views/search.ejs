@@ -1,0 +1,13 @@
+<%- include('partials/header'); -%>
+<div class="container">
+    <% if (results){ %>
+        <% results.map(result => { %>
+            <div class="item">
+                <a href="/item/<%= result._id %>"><h2><%= result.itemname %></h2></a>
+                <button>Add to cart</button>
+            </div>
+        <% }) %>
+    <% } else{ %>
+        <div class="not-found">There is no match for your search</div>
+        <% } %>
+</div>

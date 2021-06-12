@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://kit.fontawesome.com/78d78c776d.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav>
+    <h1><a href="/">Ninja Cakes</a></h1>
+    <form action="/search"  class="search">
+      <input type="text" name="itemname">
+      <button type="submit" class="search-btn"></button>
+    </form>
+    <ul>
+      <% if(user) { %>
+        <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
+        <% if(total){ %>
+          <li class="cartPopup"><%= total.quantity %></li>
+        <% } else{ %>
+          <li class="cartPopup noitem"></li>
+        <% } %>
+        <li class="account"> 
+          <div>Hello, <%=user.fullname%> <i class="fas fa-caret-down"></i></div>
+          <div class="accountmenu">
+            <a href="/purchase" class="history">Purchase History</a>
+            <a href="/logout" class="logout">Logout</a>
+          </div>
+          
+        </li>
+        <li></li>
+      <% } else { %>
+        <li class="account">
+          <div><a href="/login">Login</a></div>
+          <div><a href="/signup" class="btn">Sign Up</a></div>
+        </li>
+        
+      <% } %>
+      
+    </ul>
+  </nav>
+  <script>
+      const cartPopup = document.querySelector('.cartPopup')
+      const account = document.querySelector('.account')
+      account.addEventListener('click', function(){
+        account.classList.toggle('drop')
+      })
+  </script>
