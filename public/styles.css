@@ -233,10 +233,12 @@ header .btn{
   display: none;
 }
 .catalogue{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(5rem,auto);
+  display: flex;
+  justify-content: space-evenly;
   margin: 1rem 5rem;
+}
+.catalogue .nomatch{
+  text-align: center;
 }
 .catalogue .item{
   position: relative;
@@ -244,13 +246,15 @@ header .btn{
   flex-direction: column;
   align-items: center;
   padding: 1.3rem;
+  width: 15rem;
+  box-sizing: border-box;
 }
 .catalogue .item:hover{
   transition: all 300ms;
   box-shadow: 1px 1px 10px .5px rgba(0, 0, 0, 0.199);
   overflow-y: hidden;
   max-height: 315px;
-  padding: 0 0 0 0;
+  padding: 0;
 }
 
 .item img{
