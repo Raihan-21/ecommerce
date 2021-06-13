@@ -234,6 +234,7 @@ header .btn{
 }
 .catalogue{
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
   margin: 1rem 5rem;
 }
