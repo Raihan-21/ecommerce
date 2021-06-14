@@ -147,6 +147,19 @@ header .btn{
 }
 .headings{
   margin-left: 2rem;
+  animation: fadeInAnimation ease 1.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+@keyframes fadeInAnimation {
+  0%{
+    transform: scaleY(0);
+    transform-origin: top;
+    overflow-y: hidden;
+  }
+  100%{
+    transform: scaleY(1);
+  }
 }
 .headings h2{
   color: black;
@@ -169,7 +182,12 @@ header .btn{
   margin-right: 1rem;
 }
 .search-btn{
+  width: 2.5rem;
+  padding: .6rem;
   margin: 0;
+}
+.fa-search{
+  font-size: 1rem;
 }
 .cartPopup{
   color: white;
@@ -249,13 +267,14 @@ header .btn{
   padding: 1.3rem;
   width: 15rem;
   box-sizing: border-box;
+  margin-bottom: 1rem;
 }
 .catalogue .item:hover{
   transition: all 300ms;
   box-shadow: 1px 1px 10px .5px rgba(0, 0, 0, 0.199);
   overflow-y: hidden;
   max-height: 315px;
-  padding: 0;
+  padding: 0 0 1.3rem 0;
 }
 
 .item img{
@@ -357,7 +376,7 @@ header .btn{
 .cart .delete{
   margin: none;
 }
-.fas{
+.fa-shopping-cart{
   font-size: 1.2rem;
 }
 .quantity input{
