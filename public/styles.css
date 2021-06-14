@@ -6,7 +6,7 @@ body{
   margin: 0;
   font-size: 1.2rem;
   letter-spacing: 1px;
-  background: #fafafa;
+  background: #fab638;
 }
 h1, h2, h3, h4, ul, li, a, p, input, label, button, div, footer{
   margin: 0;
@@ -27,6 +27,7 @@ nav{
   align-items: flex-end;
   margin-bottom: 50px;
   padding: 1rem;
+  background: white;
 }
 nav ul{
   display: flex;
@@ -61,9 +62,10 @@ nav li a{
 }
 .categories a{
   padding: 0 1rem;
-  box-shadow: 1px 1px 1px 1px lightgray;
+  box-shadow: 0px 1px 1px 1px white;
   border-radius: 2rem;
   margin-left: 1rem;
+  background: #FEE996;
 }
 .btn{
   border-radius: 36px;
@@ -118,7 +120,7 @@ header{
   display: flex;
   align-items: center;
   background-image: url('/cheese cake.jpg');
-  height: 85%;
+  height: 89%;
   background-size: 100%;
   background-position: center;
   margin-top: -50px;
@@ -255,6 +257,9 @@ header .btn{
   flex-wrap: wrap;
   justify-content: space-evenly;
   margin: 1rem 5rem;
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem 0 .2rem 0;
 }
 .catalogue .nomatch{
   text-align: center;
@@ -315,8 +320,8 @@ header .btn{
   font-weight: bold;
   font-size: 1.8rem;
 }
-.selected{
-  background-color: #FEE996;
+.categories .selected{
+  background-color: white;
 }
 
 .quantity{
