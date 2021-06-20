@@ -55,6 +55,12 @@ nav li a{
 } */
 .container{
   margin: 20px 40px;
+  min-height: 60%;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+.container-itemdesc, .container-checkout, .cart, .payment{
+  background: white;
 }
 .categories{
   display: flex;
@@ -279,7 +285,7 @@ header .btn{
   box-shadow: 1px 1px 10px .5px rgba(0, 0, 0, 0.199);
   overflow-y: hidden;
   max-height: 315px;
-  padding: 0 0 1.3rem 0;
+  padding: 0 0 1.1rem 0;
 }
 
 .item img{
@@ -303,14 +309,16 @@ header .btn{
 }
 .container-itemdesc{
   display: flex;
+  justify-content: space-between;
+  padding: 2rem 1rem 1rem 2.5rem;
 }
 .itemdesc{
   width: 65%;
   display: flex;
-  margin-left: 2rem;
 }
 .itemdesc img{
   width: 15rem;
+  max-height: 20rem;
   margin-right: 1rem;
 }
 .itemdesc h2{
@@ -428,11 +436,15 @@ header .btn{
   margin: 0;
 } */
 .payment{
+  box-sizing: border-box;
   width: 0;
   position: absolute;
   right: 0;
   overflow-x: hidden;
   transition: all 400ms ease-in-out;
+}
+.preview{
+  overflow-x: hidden;
 }
 .confirm .payment{
   width: 100%;
@@ -441,6 +453,12 @@ header .btn{
 .payment{
   display: flex;
   justify-content: space-between;
+}
+.payment .itemwrap{
+  margin: 2rem 0 2rem 2rem;
+}
+.payment .total{
+  margin: 2rem 2rem 2rem 0;
 }
 .payment .upper{
   display: flex;
