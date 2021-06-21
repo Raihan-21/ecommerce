@@ -94,7 +94,7 @@ module.exports.category = async (req, res) => {
 
 module.exports.search_get = async (req, res) => {
     const itemname = req.query.itemname
-    const items = await Item.find({itemname: new RegExp(itemname)})
+    const items = await Item.find({itemname: new RegExp(itemname, 'i')})
     res.render('catalogue', {items,category: null})
 }
 module.exports.add_get = (req, res) => {

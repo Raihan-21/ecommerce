@@ -52,6 +52,10 @@
     const cancel = document.querySelector('.cancel')
     const kota = document.querySelector('.kota').value
     const alamat = document.querySelector('.alamat').value
+
+    const today = new Date()
+    const date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear()
+ 
     confirm.addEventListener('click', function(e){
         e.preventDefault()
         checkout.classList.add('confirm')
