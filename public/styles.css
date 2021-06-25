@@ -129,7 +129,7 @@ header{
   height: 89%;
   background-size: 100%;
   background-position: center;
-  margin-top: -50px;
+  margin: -50px 0 20px 0;
 }
 header img{
   width: 250px;
@@ -178,6 +178,39 @@ header .btn{
 .headings h2, .headings h3, .headings a{
   margin-bottom: 2rem;
 }
+.contact{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.contact h1{
+  font-size: 1.5rem;
+}
+.contact h2{
+  font-size: 2rem;
+}
+.contact-method{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 1rem;
+}
+.contact-method h3{
+  margin-bottom: 1rem;
+}
+.contact-email button{
+  margin: 0;
+}
+.contact-page{
+  width: 87%;
+}
+.contact-page h2{
+  text-align: center;
+}
+.contact-page form{
+  margin: 0;
+  width: 100%;
+}
 .search{
   box-shadow: none;
   display: flex;
@@ -196,6 +229,14 @@ header .btn{
 }
 .fa-search{
   font-size: 1rem;
+}
+.redirect-signup{
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+.signup-link{
+  color: blue;
+  text-decoration: underline;
 }
 .cartPopup{
   color: white;
@@ -488,7 +529,8 @@ header .btn{
   width: 60%;
   border: 1px solid black;
   padding: 0 1rem;
-  margin: auto;
+  margin: 0 auto 2rem auto;
+  background-color: white;
 }
 .purchase{
   border: 1px solid gray;

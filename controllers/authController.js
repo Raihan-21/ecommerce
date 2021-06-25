@@ -2,6 +2,7 @@ const Customer = require('../models/User')
 const jwt = require('jsonwebtoken')
 const Item = require('../models/Items')
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer')
 const fs = require('fs')
 
 const handleError = (err) => {
@@ -44,6 +45,15 @@ const modifyQty = async (userid, itemid, inc, price) => {
     const takeItem = await Item.findOneAndUpdate({_id: itemid}, {$inc: {quantity: -inc}})
     const add = await Customer.findOneAndUpdate({_id: userid, "inventory._id": mongoose.Types.ObjectId(itemid)}, {$inc: { "inventory.$.quantity": inc, "inventory.$.totalprice": price}})
 }
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "jackrabbid45@gmail.com",
+        pass: "ironman2"
+    }
+});
 module.exports.signup_get = (req, res) => {
     res.render('signup')
 }
@@ -141,7 +151,6 @@ module.exports.addCart = async (req, res) => {
         quantity: qty,
         totalprice: takeItem.price * qty
     }}})
-    console.log(add.inventory)
     
     res.json({sukses: 'sukses ea'})
 }
@@ -214,8 +223,95 @@ module.exports.checkout = async (req, res) => {
         }),
         total: total.totalprice
     }}})
+
+    const adminOptions = {
+        from    : "jackrabbid45@gmail.com",
+        to      : "muhammadraihan118@gmail.com",
+        subject : "Notifikasi Pembelian",
+        html    : ` <h1>Ada pembelian berupa : </h1>
+                    <div>Kota    : ${kota}</div>
+                    <div>Alamat  : ${alamat}</div>
+                    <div>Item    : ${JSON.stringify(user.inventory.map(item => {
+                        return {
+                        _id: item._id,
+                        itemname: item.itemname,
+                        price: item.price,
+                        quantity: item.quantity,
+                        totalprice: item.totalprice
+                        }
+
+                        }))}</div>
+                    <div>Total   : ${total.totalprice}</div> `
+    }
+    const clientOptions = {
+        from    : "jackrabbid45@gmail.com",
+        to      : user.email,
+        subject : "Notifikasi Pembelian",
+        html    : `<h2>Anda baru saja melakukan pembelian dengan detail : </h2>
+                    <div>Kota    : ${kota}</div>
+                    <div>Alamat  : ${alamat}</div>
+                    <div>Item    : ${JSON.stringify(user.inventory.map(item => {
+                        return {
+                        Nama: item.itemname,
+                        Harga: item.price,
+                        Jumlah: item.quantity,
+                        Harga: item.totalprice
+                        }
+
+                        }))}</div>
+                    <div>Total   : ${total.totalprice}</div>
+                    <h1> Harap dibayar dalam kurun waktu 3 hari</h1> 
+                    <h3> kirimkan bukti pembayaran melalui email ini </h3>
+        `
+    }
+    transporter.sendMail(adminOptions, function(err, info){
+        if(err){
+            console.log(err)
+            return;
+        }
+        else{
+            console.log(info.response)
+        }
+    });
+    transporter.sendMail(clientOptions, function(err, info){
+        if(err){
+            console.log(err)
+            return;
+        }
+        else{
+            console.log(info.response)
+        }
+    })
     res.json({status: 'sukses'})
 }
+
 module.exports.purchase = async (req, res) => {
     res.render('purchase')
+}
+module.exports.contact = async (req, res) => {
+    res.render('contact')
+}
+module.exports.contact_post = async (req, res) => {
+    const {name, email, nomor, details} = req.body;
+    const contactOptions = {
+        from: "jackrabbid45@gmail.com",
+        to: "muhammadraihan118@gmail.com",
+        subject: "Ada keluhan dengan detail",
+        html: `
+                <div>Nama: ${name} </div>
+                <div>Email: ${email} </div>
+                <div>Nomor Handphone: ${nomor}</div>
+                <div>Detail: ${details}</div>
+                `
+    }
+    transporter.sendMail(contactOptions, function(err, info){
+        if(err)[
+            console.log(err)
+        ]
+        else{
+            console.log(info.response)
+        }
+    })
+    res.json({status: "Your form has been submitted!"})
+
 }

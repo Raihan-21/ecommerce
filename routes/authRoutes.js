@@ -23,5 +23,7 @@ router.get('/cartapi', authController.getUpdatedCart)
 router.get('/cart/checkout', authController.checkout_get)
 router.delete('/cart/checkout', authController.checkout)
 router.get('/purchase', authController.purchase)
+router.get('/contact', authController.contact)
+router.post('/contact', authController.contact_post)
 module.exports = router;
 // fields([{name: 'itemname'}, {name: 'category'}, {name: 'price'}, {name: 'quantity'}, {name: 'image'}])

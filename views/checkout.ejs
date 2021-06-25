@@ -4,7 +4,7 @@
         <form class="">
             <label for="name">Full Name</label>
             <input type="text" name="name" value="<%= user.fullname %>" required>
-            <h3>Alamat</h3>
+            <h3>Alamat Tujuan</h3>
             <label for="kota">Kota</label>
             <input type="text" name="kota" value="<%= user.address.city %>" class="kota" required>
             <label for="alamat">Alamat Lengkap</label>
@@ -74,6 +74,6 @@
         })
         const data = await res.json();
         console.log(data)
-        location.assign('/purchase')
+        location.assign('/catalogue')
     })
 </script>
