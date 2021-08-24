@@ -1,9 +1,11 @@
 const Customer = require('../models/User')
 const jwt = require('jsonwebtoken')
 const Item = require('../models/Items')
+const Order = require('../models/Orders')
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer')
-const fs = require('fs')
+const fs = require('fs');
+const { ObjectId } = require('mongoose');
 
 const handleError = (err) => {
     if(err.message.includes('item validation failed')){
@@ -41,6 +43,11 @@ const createToken = (id) => {
         expiresIn: maxAge
     })
 }
+const adminToken = (id) => {
+    return jwt.sign({id}, 'admin secret', { 
+        expiresIn: maxAge
+    })
+}
 const modifyQty = async (userid, itemid, inc, price) => {
     const takeItem = await Item.findOneAndUpdate({_id: itemid}, {$inc: {quantity: -inc}})
     const add = await Customer.findOneAndUpdate({_id: userid, "inventory._id": mongoose.Types.ObjectId(itemid)}, {$inc: { "inventory.$.quantity": inc, "inventory.$.totalprice": price}})
@@ -51,7 +58,7 @@ const transporter = nodemailer.createTransport({
     secure: true,
     auth: {
         user: "jackrabbid45@gmail.com",
-        pass: "ironman2"
+        pass: "gohangoku"
     }
 });
 module.exports.signup_get = (req, res) => {
@@ -62,7 +69,6 @@ module.exports.signup_post = async (req, res) => {
     try{
         const user = await Customer.create({email,fullname, password, address})
         const token = createToken(user._id)
-        // res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000})
         res.status(201).json({user: user._id})
     }
     catch(err){
@@ -90,6 +96,109 @@ module.exports.login_post = async (req, res) => {
 module.exports.logout_get = (req, res) => {
     res.cookie('jwt', '', {maxAge: 1})
     res.redirect('/')
+}
+module.exports.adminlogin = (req, res) => {
+    res.render('adminlogin')
+}
+module.exports.adminlogin_post = (req, res) => {
+    const { email, password} = req.body
+    const token = adminToken(password)
+    const adminEmail = "test@gmail.com"
+    const adminPassword = "innorainecake"
+    const errors = {email: '', password: ''}
+    if(email == adminEmail && password == adminPassword){
+        res.cookie('admin', token, { httpOnly: true, maxAge: maxAge * 1000})
+        res.status(200).json({sukses: 'sukses'})
+    }
+    else{
+        if(email !== adminEmail){
+            errors.email = 'Email salah'
+        }
+        if(password !== adminPassword ){
+            errors.password = 'Password salah'
+        }
+        res.status(400).json({errors})
+    }
+    
+}
+
+module.exports.adminuser = async (req, res) => {
+    const users = await Customer.find({})
+    res.render('adminuser', {users})
+}
+module.exports.adminitem = async (req, res) => {
+    const items = await Item.find({})
+    res.render('adminitem', {items})
+}
+module.exports.adminorder = async (req, res) => {
+    const orders = await Order.find({})
+    res.render('adminorder', {orders})
+}
+module.exports.adminitemdesc = async (req, res) => {
+    const item = await Item.findOne({_id: req.params.itemid})
+    res.render('adminitemdesc', {item})
+}
+module.exports.adminuserdesc = async (req, res) => {
+    const url = req.originalUrl
+    const userinfo = await Customer.findOne({_id: req.params.userid})
+    const userorders = await Order.find({userid: req.params.userid})
+    res.render('adminuserdesc', {userinfo, userorders, total: null, url})
+}
+module.exports.updateuser = async (req, res) => {
+    const {userid, fullname, email, city,kecamatan, kelurahan, address} = req.body
+    const updateInfo = await Customer.findOneAndUpdate({_id: userid}, {$set: {email, fullname, "address.city": city,"address.kecamatan": kecamatan,"address.kelurahan": kelurahan, "address.detail": address}})
+    res.json({sukses: 'hadeh'})
+}
+module.exports.deleteuser = async (req, res) => {
+    const {userid} = req.body
+    const updateInfo = await Customer.deleteOne({_id: userid})
+    res.json({sukses: 'hadeh'})
+}
+module.exports.updatestatus = async (req, res) => {
+    const {userid, purchaseid, paystatus} = req.body
+    // const updatePay = await Customer.findOneAndUpdate({_id: userid, "orders._id": mongoose.Types.ObjectId(purchaseid)}, {$set: { "orders.$.status": paystatus}})
+    const updateOrder = await Order.findOneAndUpdate({_id: purchaseid}, {$set : {status: paystatus}})
+    res.json({sukses: 'hadeh'})
+}
+module.exports.deleteorder = async (req, res) => {
+    const {userid, purchaseid} = req.body
+    const orders = await Order.findOne({_id: purchaseid})
+    const items = orders.item.map(async order => {
+        const updateitem = await Item.findOneAndUpdate({_id: order._id}, {$inc : {quantity: order.quantity}})
+    })
+    const deleteOrder = await Order.deleteOne({_id: purchaseid})
+    res.json({sukses: 'hadeh'})
+}
+module.exports.updateitem = async (req, res) => {
+    const {itemid, itemname, category, price,desc, quantity} = req.body
+    const item = await Item.findOneAndUpdate({_id: itemid}, {itemname, category, price, desc, quantity})
+    res.status(200).json({item: item._id})
+}
+module.exports.updateitemimg = async (req, res) => {
+    const {itemid} = req.body
+    const file = req.file
+    const img = fs.readFileSync(file.path)
+    const encodedImg = img.toString('base64')
+    console.log(itemid)
+    const image = {
+        filename: file.originalname,
+        contentType: file.mimetype,
+        imgBase64: encodedImg
+    }
+    const item = await Item.findOneAndUpdate({_id: itemid}, {image})
+    res.status(200).json({item: item._id})
+
+
+}
+module.exports.deleteitem = async (req, res) => {
+    const {itemid} = req.body
+    const deleteitem = await Item.deleteOne({_id: itemid})
+    console.log(deleteitem)
+    res.json({sukses: deleteitem})
+}
+module.exports.admin_logout = (req, res) => {
+    res.cookie('admin', '', {maxAge: 1})
+    res.redirect('/admin/login')
 }
 module.exports.catalogue = async (req, res) => {
     const items = await Item.find({})
@@ -152,23 +261,30 @@ module.exports.addCart = async (req, res) => {
         totalprice: takeItem.price * qty
     }}})
     
-    res.json({sukses: 'sukses ea'})
+    res.json({sukses: 'Barang dimasukkan dalam keranjang'})
 }
+module.exports.profile = (req, res) => {
+    const url = req.originalUrl
+    res.render('profile', {url})
+}
+module.exports.profile_update = async (req, res) => {
+    const {fullname, email, city,kecamatan, kelurahan, address} = req.body
+    const user = req.user
+    const updateInfo = await Customer.findOneAndUpdate({_id: user._id}, {$set: {email, fullname, "address.city": city,"address.kecamatan": kecamatan,"address.kelurahan": kelurahan, "address.detail": address}})
 
+    res.json({sukses: 'hadeh'})
+}
 module.exports.cart = (req, res) => {
     const user = req.user
     if(user.inventory.length !== 0){
         const total = user.inventory.reduce((curr, acc) => {
             return {quantity: curr.quantity + acc.quantity, totalprice: curr.totalprice + acc.totalprice}
-            
         })
         res.render('cart', {user,category: null, total})
     }
     else{
         res.render('cart', {user,category: null, total: null})
     }
-    
-    
 }
 module.exports.modifyCart = async (req, res) => {
     let {itemid, modType, qty} = req.body
@@ -201,46 +317,57 @@ module.exports.checkout_get = async (req, res) => {
 }
 module.exports.checkout = async (req, res) => {
     const user = req.user
-    const {kota, alamat} = req.body
+    const {date,nama, kota, kecamatan, kelurahan, alamat} = req.body
     const total = user.inventory.reduce((curr, acc) => {
         return {totalprice: curr.totalprice + acc.totalprice}}, {totalprice: 0})
-    // const total = user.inventory.reduce((curr, acc) => {
-    //     return curr.totalprice + acc.totalprice, 0
-        
-    // })
-    const clear = await Customer.findByIdAndUpdate(user._id, { $set: {inventory: []}, $push: {orders: {
-        kota: kota,
-        alamat: alamat,
-        item: user.inventory.map(item => {
-            return {
-                _id: item._id,
-                itemname: item.itemname,
-                price: item.price,
-                quantity: item.quantity,
-                totalprice: item.totalprice
-            }
-
-        }),
-        total: total.totalprice
-    }}})
-
-    const adminOptions = {
-        from    : "jackrabbid45@gmail.com",
-        to      : "muhammadraihan118@gmail.com",
-        subject : "Notifikasi Pembelian",
-        html    : ` <h1>Ada pembelian berupa : </h1>
-                    <div>Kota    : ${kota}</div>
-                    <div>Alamat  : ${alamat}</div>
-                    <div>Item    : ${JSON.stringify(user.inventory.map(item => {
-                        return {
+        const item = user.inventory.map(item => {
+                    return {
                         _id: item._id,
                         itemname: item.itemname,
                         price: item.price,
                         quantity: item.quantity,
                         totalprice: item.totalprice
-                        }
+                    }});
+    // const receipt = {
+    //     _id: mongoose.Types.ObjectId(),
+    //     date: date,
+    //     kota: kota,
+    //     kecamatan: kecamatan,
+    //     kelurahan: kelurahan,
+    //     alamat: alamat,
+    //     item: user.inventory.map(item => {
+    //         return {
+    //             _id: item._id,
+    //             itemname: item.itemname,
+    //             price: item.price,
+    //             quantity: item.quantity,
+    //             totalprice: item.totalprice
+    //         }
+    //     }),
+    //     total: total.totalprice,
+    //     status: "belum dibayar"
+    // }
+    // const checkout = await Customer.findByIdAndUpdate(user._id, { $set: {inventory: []}, $push: {orders: 
+    //     receipt
+    // }})
+    const checkout = await Customer.findByIdAndUpdate(user._id, {$set: {inventory: []}})
+    const order = await Order.create({date,userid: user._id, receiver: nama, kota, kecamatan, kelurahan, detailalamat: alamat, item,total: total.totalprice, status: "Belum Dibayar"})
+    const adminOptions = {
+        from    : "jackrabbid45@gmail.com",
+        to      : "muhammadraihan118@gmail.com",
+        subject : "Notifikasi Pembelian",
+        html    : ` <h1>Ada pembelian berupa : </h1>
+                    <div>ID   : ${user._id}</div>
+                    <div>Penerima   : ${nama}</div>
+                    <div>Kota    : ${kota}</div>
+                    <div>Kota    : ${kota}</div>
+                    <div>Alamat  : ${alamat}</div>
+                    <div>Item    : ${user.inventory.map(item => {
+                        return `
+                        <div>${item.itemname} x ${item.quantity}  : ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price)} </div>
+                        `
 
-                        }))}</div>
+                        })}</div>
                     <div>Total   : ${total.totalprice}</div> `
     }
     const clientOptions = {
@@ -250,15 +377,11 @@ module.exports.checkout = async (req, res) => {
         html    : `<h2>Anda baru saja melakukan pembelian dengan detail : </h2>
                     <div>Kota    : ${kota}</div>
                     <div>Alamat  : ${alamat}</div>
-                    <div>Item    : ${JSON.stringify(user.inventory.map(item => {
-                        return {
-                        Nama: item.itemname,
-                        Harga: item.price,
-                        Jumlah: item.quantity,
-                        Harga: item.totalprice
-                        }
-
-                        }))}</div>
+                    <div>Item    : ${user.inventory.map(item => {
+                        return `
+                        <div>${item.itemname} x ${item.quantity}  : ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price)} </div>
+                        `
+                        })}</div>
                     <div>Total   : ${total.totalprice}</div>
                     <h1> Harap dibayar dalam kurun waktu 3 hari</h1> 
                     <h3> kirimkan bukti pembayaran melalui email ini </h3>
@@ -282,11 +405,33 @@ module.exports.checkout = async (req, res) => {
             console.log(info.response)
         }
     })
-    res.json({status: 'sukses'})
+    res.json({order: order._id})
 }
 
 module.exports.purchase = async (req, res) => {
-    res.render('purchase')
+    const user = req.user
+    const orders = await Order.find({userid: user._id})
+    res.render('purchase', {orders})
+}
+module.exports.purchasedesc = async (req, res) => {
+    const user = req.user
+    // const purchase = await Customer.findOne({_id: user._id}, {orders: {$elemMatch: {_id: mongoose.Types.ObjectId(req.params.purchaseid)}}} )
+    const order = await Order.findOne({_id: req.params.purchaseid})
+    res.render('purchasedesc', {order})
+}
+module.exports.uploadtransfer = async (req, res) => {
+    const { purchaseid } = req.body
+    const user = req.user
+    const file = req.file
+    const img = fs.readFileSync(file.path)
+    const encodedImg = img.toString('base64')
+    const image = {
+        filename: file.originalname,
+        contentType: file.mimetype,
+        imgBase64: encodedImg
+    }
+    // const upload = await Customer.findOneAndUpdate({_id: user._id, "orders._id": mongoose.Types.ObjectId(purchaseid)}, {$set: {"orders.$.image": image}} )
+    const upload = await Order.findOneAndUpdate({_id: purchaseid}, {$set: {bukti: image}})
 }
 module.exports.contact = async (req, res) => {
     res.render('contact')

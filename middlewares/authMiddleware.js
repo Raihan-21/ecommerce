@@ -95,4 +95,20 @@ const checkStock = async (req, res, next) => {
         }
     }
 }
-module.exports ={verifyAuth, checkUser, checkStock, upload}
+const verifyAdmin = (req, res, next) => {
+    const tokenAdmin = req.cookies.admin
+    if(tokenAdmin){
+        jwt.verify(tokenAdmin, 'admin secret', (err, decodedToken) => {
+            if(err){
+                res.redirect('/admin/login')
+            }
+            else{
+                next()
+            }
+        })
+    }
+    else{
+        res.redirect('/admin/login')
+    }
+}
+module.exports ={verifyAuth, checkUser, verifyAdmin, checkStock, upload}

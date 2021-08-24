@@ -11,12 +11,18 @@
     <label for="password">Password</label>
     <input type="password" name="password">
     <div class="password error"></div>
-    <h3>Address</h3>
-    <label for="city">City</label>
+    <h3>Alamat</h3>
+    <label for="city">Kota</label>
     <input type="text" name="city" required>
     <div class="city error"></div>
-    <label for="address">Address Details</label>
-    <textarea name="address" id="" cols="48" rows="10"></textarea>
+    <label for="kecamatan">Kecamatan</label>
+    <input type="text" name="kecamatan" required>
+    <div class="kecamatan error"></div>
+    <label for="kelurahan">Kelurahan</label>
+    <input type="text" name="kelurahan" required>
+    <div class="kelurahan error"></div>
+    <label for="address">Detail Alamat</label>
+    <textarea name="address" id="" cols="48" rows="5" placeholder="Nama jalan, no rumah dll" required></textarea>
     <div class="address error"></div>
     <button type="submit">Submit</button>
     <div class="success"></div>
@@ -36,13 +42,15 @@
         const fullname = signup.name.value
         const password = signup.password.value
         const city = signup.city.value
+        const kecamatan = signup.kecamatan.value
+        const kelurahan = signup.kelurahan.value
         const address = signup.address.value
 
         try {
             const res = await fetch('/signup',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email, fullname, password, address: { city: city, detail: address}})
+                body: JSON.stringify({email, fullname, password, address: { city, kecamatan, kelurahan, detail: address}})
             })
             const data = await res.json()
             console.log(data)
@@ -63,4 +71,3 @@
         }
     })
 </script>
-<%- include('partials/footer'); -%>

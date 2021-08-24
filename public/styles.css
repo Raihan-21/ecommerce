@@ -1,6 +1,5 @@
 /* google fonts */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
-
 body{
   /* margin: 20px 40px; */
   margin: 0;
@@ -45,22 +44,105 @@ nav li a{
   padding: 10px 16px;
   letter-spacing: 2px;
 }
-/* .smoothie{
-  height: 20rem;
-  width: 100%;
-  background-image: url('/cheese cake.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
-} */
+
 .container{
   margin: 20px 40px;
   min-height: 60%;
   padding: 1rem;
   border-radius: 1rem;
 }
-.container-itemdesc, .container-checkout, .cart, .payment{
+.container-itemdesc,.container-profile,.container-admin, .container-checkout,.container-purchases, .cart, .payment{
   background: white;
+}
+.container-admin{
+  display: flex;
+}
+.admin-itemdesc{
+  display: flex;
+  flex-direction: column;
+}
+.container-main{
+  box-sizing: border-box;
+  flex: 1;
+}
+.container-main .info{
+  box-sizing: border-box;
+  padding-right: 1rem;
+  box-shadow: none;
+}
+.container-main .purchases{
+  box-sizing: border-box;
+  margin: 0;
+  width: 100%;
+}
+.container-main .purchase{
+  margin: 0 0;
+  padding-bottom: 0;
+  border: none;
+  min-width: 30rem;
+}
+.purchases .header{
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3rem;
+}
+.purchases .header-details{
+  display: flex;
+}
+.header-details .statuscapt{
+  margin-right: 2rem;
+}
+.purchase-container{
+  display: flex;
+  flex-direction: column-reverse;
+}
+.purchase-wrapper{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  padding-bottom: 1rem;
+}
+.purchase-wrapper button{
+  background-color: white;
+  background-image: none;
+  border: 1px solid black;
+}
+.purchase-wrapper .buttons{
+  display: flex;
+}
+.purchase-wrapper button{
+  height: 3.5rem;
+  width: 3.5rem;
+}
+.purchase-wrapper .statusButton{
+  margin-right: 8rem;
+}
+.purchase-wrapper .deletepurchase{
+  background-image: url('remove.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 1rem;
+}
+.purchase-wrapper .confirmed{
+  background-color: lightgreen;
+  background-image: url('tick.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.buktiTf{
+  cursor: pointer;
+  width: 10rem;
+}
+.fullImg{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.enlarge{
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: .5;
 }
 .categories{
   display: flex;
@@ -101,6 +183,12 @@ input{
 label{
   display: block;
   margin: 20px 0 10px;
+}
+textarea{
+  padding: 10px 12px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: inherit;
+  width: 100%;
 }
 button{
   display: block;
@@ -178,10 +266,89 @@ header .btn{
 .headings h2, .headings h3, .headings a{
   margin-bottom: 2rem;
 }
+.itemList{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: .5rem;
+}
+.userList{
+  margin: .5rem;
+  flex: 1;
+}
+.userwrap{
+  display: flex;
+  justify-content: space-between;
+  padding: .5rem;
+}
+.itemwrap{
+  display: flex;
+  justify-content: space-between;
+  padding: .5rem;
+}
+.bottomList .itemwrap button, .userwrap button{
+  margin: 0;
+  opacity: 0;
+}
+.container-admin button{
+  margin-top: none;
+}
+.upperList{
+  display: flex;
+  margin-bottom: 1rem;
+}
+.additem{
+  background: #FEE996;
+  border-radius: 1.5rem;
+  padding: .7rem;
+}
+.usercontainer{
+  display: block;
+  padding: .5rem;
+}
+
+.bottomList .itemwrap:hover, .userwrap:hover{
+  background-color: lightgray;
+}
+.bottomList .itemwrap:hover button, .userwrap:hover button{
+  opacity: 1;
+}
+table{
+  border-spacing: 0;
+}
+.bottomList td, .bottomList th{
+  border: 1px solid black;
+}
+.bottomList td{
+  padding-left: 1rem;
+  font-weight: 500;
+}
+.bottomList .itemrow button{
+  margin: .2rem;
+  font-size: .7rem;
+}
+.container-admin form{
+  margin: 0;
+  width: 100%;
+  padding: 1rem;
+  flex: 1;
+  box-shadow: none;
+}
+.container-admin .purchases{
+  width: 100%;
+}
+.itemImgForm{
+  display: flex;
+}
+.itemimgsubmit{
+  padding-left: 2rem;
+  padding-top: 5rem;
+}
 .contact{
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 1rem;
 }
 .contact h1{
   font-size: 1.5rem;
@@ -238,6 +405,9 @@ header .btn{
   color: blue;
   text-decoration: underline;
 }
+.signup{
+  margin-bottom: 50px;
+}
 .cartPopup{
   color: white;
   font-weight: bold;
@@ -278,10 +448,38 @@ header .btn{
   transition: all 100ms ease-in-out;
 }
 
-.history{
+.dropmenu{
   border-bottom: 1px solid rgb(158, 158, 158);
 
 
+}
+.container-profile{
+  display: flex;
+}
+.container-profile form{
+  margin: .5rem 1rem;
+  padding: 0;
+  flex: 1;
+  box-shadow: none;
+}
+.sidemenu{
+  display: flex;
+  flex-direction: column;
+  width: 12rem;
+  border-right: 1px solid black;
+  padding-right: 1rem;
+}
+.sidemenu h2{
+  margin-bottom: 1rem;
+}
+.sidemenu a{
+  padding: .5rem;
+}
+.sidemenu .history{
+  border: none;
+}
+.sidemenu .active{
+  background-color: lightgray;
 }
 .fa-caret-down{
   transition: all 100ms ease-in-out;
@@ -388,6 +586,7 @@ header .btn{
   flex-wrap: wrap;
   justify-content: space-between;
   margin: 7% 10% 0 10%;
+  padding: 1rem 2rem;
 }
 .cart h2{
   width: 15%;
@@ -453,7 +652,12 @@ header .btn{
   cursor: not-allowed;
   pointer-events: none;
 }
-
+.empty button{
+  background-color: lightgray;
+  color: gray;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 .checkout-container{
   position: relative;
@@ -497,6 +701,11 @@ header .btn{
 }
 .payment .itemwrap{
   margin: 2rem 0 2rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+.payment .itemwrap .item{
+  margin-right: 2rem;
 }
 .payment .total{
   margin: 2rem 2rem 2rem 0;
@@ -525,21 +734,34 @@ header .btn{
   width: 100px;
   margin: -30px auto 20px;
 }
+.container-purchases{
+  display: flex;
+}
 .purchases{
-  width: 60%;
-  border: 1px solid black;
+  width: 50%;
+  /* border: 1px solid black; */
   padding: 0 1rem;
-  margin: 0 auto 2rem auto;
+  margin: .5rem auto;
   background-color: white;
 }
-.purchase{
+.purchase, .purchasedesc{
   border: 1px solid gray;
   margin: 1rem 0;
   padding: 1rem;
+
 }
-.purchase-item, .purchase-total{
+.purchase-wrapper .purchase{
+  width: 50%;
+}
+.purchase-section{
   display: flex;
   justify-content: space-between;
+}
+.note{
+  margin-top: 1rem;
+}
+.purchasedesc{
+  min-height: 15rem;
 }
 footer{
   text-align: center;

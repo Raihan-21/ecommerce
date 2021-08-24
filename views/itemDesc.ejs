@@ -9,9 +9,14 @@
         </div>
         
     </div>
-    <div class="quantity">
+    <div class="quantity <%= item.quantity == 0 ? 'empty' : '' %>">
         <h3>Order</h3>
-        <div>stok : <%= item.quantity %></div>
+        <div><% if(item.quantity !== 0) { %>
+            Tersedia
+            <% } else{ %>
+            Tidak tersedia
+            <% } %>
+        </div>
         <div class="upper">
             <button class="decre min">-</button>
             <input value="1" class="qtyinput"></input>

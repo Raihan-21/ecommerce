@@ -1,22 +1,40 @@
 <%- include('partials/header'); -%>
-<div class="purchases">
-    <h2>My Purchase</h2>
-    <% user.orders.map(order => { %>
-        <div class="purchase">
-            <p>Order ID: 173173</p>
-            <% order.item.map( cake => { %>
-                <div class="purchase-item">
-                    <div><%= cake.itemname %> : <%= cake.quantity %></div>
-                    <div><% cake.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cake.totalprice) %> <%= cake.totalprice %> </div>
+<div class="container container-purchases">
+    <%- include('partials/profilemenu'); -%>
+    <div class="purchases">
+        <h2>My Orders</h2>
+        <% orders.map(order => { %>
+        <a href="/purchase/<%= order._id %>">
+            <div class="purchase">
+                <div class="purchase-section">
+                    <div>Order ID:</div>
+                    <div><%= order._id %></div>
                 </div>
-            <% }) %>
-            <div class="purchase-total">
-                <div>Total : </div>
-                <div><% order.total = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(order.total) %> <%= order.total %></div>
-                <div><%= order.total %></div>
+                <div class="purchase-section">
+                    <div>Tanggal Pemesanan:</div>
+                    <div> <%= order.date %></div>
+                </div>
+                <div class="purchase-section">
+                    <div>Alamat Tujuan:</div>
+                    <div> <%= order.detailalamat %></div>
+                </div>
+                <% order.item.map( cake => { %>
+                    <div class="purchase-section">
+                        <div><%= cake.itemname %> : <%= cake.quantity %></div>
+                        <div><% cake.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cake.totalprice) %> <%= cake.totalprice %> </div>
+                    </div>
+                <% }) %>
+                <div class="purchase-section">
+                    <div>Total : </div>
+                    <div><%const total = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(order.total) %>  <%= total %></div>
+                </div>
+                <div class="purchase-section">
+                    <div>Status Pembayaran : </div>
+                    <div><%= order.status %></div>
+                </div>
             </div>
-            
-        </div>
-    <% }) %>
-    
+        </a>
+        <% }) %>
+        
+    </div>
 </div>

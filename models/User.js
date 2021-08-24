@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: [true, 'please enter your city address']
         },
+        kecamatan: {
+            type: String,
+            required: [true, 'please enter your kecamatan address']
+        },
+        kelurahan: {
+            type: String,
+            required: [true, 'please enter your kelurahan address']
+        },
         detail: {
             type: String,
             required: [true, 'please enter your address']
