@@ -1,0 +1,91 @@
+<%- include('partials/header'); -%>
+<div class="container container-purchases">
+    <%- include('partials/profilemenu'); -%>
+    <div class="purchases">
+        <div class="purchasedesc">
+            <div class="purchase-section">
+                <div>Order ID:</div>
+                <div class="purchaseid"><%= order._id %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Tanggal Pemesanan:</div>
+                <div> <%= order.date %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Atas Nama:</div>
+                <div> <%= order.receiver %></div>
+            </div>
+            <br>
+            <div style="font-weight:bold">Alamat Tujuan</div>
+            <div class="purchase-section">
+                <div>Kota:</div>
+                <div> <%= order.kota %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Kecamatan:</div>
+                <div> <%= order.kecamatan %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Kelurahan:</div>
+                <div> <%= order.kelurahan %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Detail:</div>
+                <div> <%= order.detailalamat %></div>
+            </div>
+            <br>
+            <div style="font-weight: bold;">Daftar Produk</div>
+            <% order.item.map(cake => { %>
+                <div class="purchase-section">
+                    <div><%= cake.itemname %> : <%= cake.quantity %></div>
+                    <div><% cake.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cake.totalprice) %> <%= cake.totalprice %> </div>
+                </div>
+            <% }) %>
+            <div class="purchase-section">
+                <div>Total : </div>
+                <div><%const total = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(order.total) %>  <%= total %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Status Pembayaran : </div>
+                <div><%=order.status %></div>
+            </div>
+            <div class="purchase-section">
+                <div>Bukti Pembayaran:</div>
+            </div>
+            <% if(order.bukti.filename){ %>
+                <img src="data:<%= order.bukti.contentType %>;base64, <%= order.bukti.imgBase64 %>" alt="" class="buktiTf">
+            <% } %>
+            <div class="note">
+                <p style="font-weight: bold;">Catatan:</p>
+                <p>Harap lakukan pembayaran melalui transfer ke rekening</p>
+                <p style="font-weight: bold;">xxxxxxx</p>
+                <p>Batas waktu pembayaran 1 hari setelah dilakukan pemesanan</p>
+            </div>
+        </div>
+
+        <% if(order.status == "Belum Dibayar") { %>
+        <form action="" class="uploadform">
+            <h3>Upload Bukti Pembayaran</h3>
+            <input type="file" id="img" name="img" accept="image/*">
+            <button type="submit" class="uploadButton">Upload</button>
+        </form>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    const uploadForm = document.querySelector('.uploadform')
+    const purchaseid = document.querySelector('.purchaseid').innerHTML
+    uploadForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('purchaseid', purchaseid)
+        formData.append('image', uploadForm.img.files[0])
+        const res = await fetch('/purchase/uploadtransfer', {
+            method: 'PUT',
+            body: formData
+        })
+        const data = await res.json();
+        console.log(data)
+    })
+</script>

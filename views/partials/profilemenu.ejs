@@ -1,0 +1,17 @@
+<div class="sidemenu">
+    <h2 class="nama"><%= user.fullname%></h2>
+    <a href="/profile" class="menu-profile">Acccount</a>
+    <a href="/purchase" class="menu-history">Order History</a>
+    <a href="/logout" class="menu-logout">Logout</a>
+    
+</div>
+<script>
+    const profile = document.querySelector('.menu-profile')
+    const history = document.querySelector('.menu-history')
+    if(window.location.pathname == '/profile'){
+        profile.classList.add('active')
+    }
+    else if(window.location.pathname == '/purchase'){
+        history.classList.add('active')
+    }
+</script>

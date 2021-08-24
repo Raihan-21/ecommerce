@@ -1,0 +1,63 @@
+<%- include('partials/header'); -%>
+<div class="container container-admin">
+    <%- include('partials/adminmenu'); -%>
+    <div class="itemList">
+        <div class="upperList">
+            <a href="/admin/item/inputitem" class="additem">Add item</a>
+        </div>
+        <!-- <div class="bottomList">
+            <% items.map( item => { %>
+                <div class="itemwrap" data-itemid="<%= item._id %>">
+                    <a href="/admin/item/details/<%= item._id %>" class="itemcontainer"><%=item.itemname %></a>
+                    <button class="deleteitem">Delete</button>
+                </div>
+            
+            <% }) %>
+        </div> -->
+        <table class="bottomList">
+            <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th style="width: 12rem;">Edit</th>
+            </tr>
+            <% items.map( item => { %>
+                <tr class="itemrow" data-itemid="<%= item._id %>">
+                    <td><a href="/admin/item/details/<%= item._id %>" class="itemcontainer"><%=item.itemname %></a></td>
+                    <td><%= item.category %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.quantity %></td>
+                    <td style="display: flex;"><a href="/admin/item/details/<%= item._id %>"><button>Edit</button></a> <button class="deleteitem">Delete</button></td> 
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+</div>
+<script>
+    const items = document.querySelectorAll('.itemwrap')
+    // const itemid = item.dataset.itemid
+    // const deleteitem = document.querySelector('.deleteitem')
+    items.forEach(item => {
+        const itemid = item.dataset.itemid
+        const deleteitem = item.querySelector('.deleteitem')
+        deleteitem.addEventListener('click', async function(){
+            const res = await fetch('/admin/item/deleteitem',{
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({itemid})
+            })
+            const data = await res.json()
+            console.log(data.sukses)
+            })
+    });
+    // deleteitem.addEventListener('click', async function(){
+    //     const res = await fetch('/admin/item/deleteitem',{
+    //         method: 'DELETE',
+    //         headers: {'Content-Type': 'application/json'},
+    //         body: JSON.stringify({itemid})
+    //     })
+    //     const data = await res.json()
+    //     console.log(data.sukses)
+    // })
+</script>

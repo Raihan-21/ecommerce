@@ -1,0 +1,21 @@
+<div class="sidemenu">
+    <h3>Admin</h3>
+    <a href="/admin/user" class="user">Users</a>
+    <a href="/admin/item" class="item">Items</a>
+    <a href="/admin/order" class="order">Orders</a>
+    <a href="/adminlogout" class="logout">Logout</a>
+</div>
+<script>
+    const userTab = document.querySelector('.user')
+    const itemTab = document.querySelector('.item')
+    const orderTab = document.querySelector('.order')
+    if(window.location.pathname == '/admin/user'){
+        userTab.classList.add('active')
+    }
+    else if(window.location.pathname == '/admin/item'){
+        itemTab.classList.add('active')
+    }
+    else if(window.location.pathname == '/admin/order'){
+        orderTab.classList.add('active')
+    }
+</script>

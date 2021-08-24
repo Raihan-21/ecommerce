@@ -1,0 +1,32 @@
+<%- include('partials/header'); -%>
+<div class="container container-admin">
+    <%- include('partials/adminmenu'); -%>
+    <div class="userList">
+        <h3>Email:</h3>
+            <% users.map( user => { %>
+                <div class="userwrap" data-userid="<%= user._id %>">
+                <a href="/admin/user/details/<%= user._id %>" class="usercontainer"><%=user.email %></a>
+                <button class="deleteitem">Delete</button>   
+                </div>
+            <% }) %>
+        
+    </div>
+</div>
+<script>
+    const users = document.querySelectorAll('.userwrap')
+    users.forEach(user => {
+        const userid = user.dataset.userid
+        const deleteuser = user.querySelector('.deleteitem')
+        deleteuser.addEventListener('click', async function(){
+            const data = await fetch('/admin/user/deleteuser', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userid})
+            })
+            const res = await data.json()
+            console.log(res)
+            window.location.reload()
+        })
+    })
+    
+</script>

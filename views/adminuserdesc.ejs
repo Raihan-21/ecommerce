@@ -1,0 +1,139 @@
+<%- include('partials/header'); -%>
+<div class="container container-admin admin-profile">
+    <%- include('partials/adminmenu'); -%>
+    <div class="container-main">
+        <form action="" class="info">
+            <h3>Biodata</h3>
+            <label for="name">Nama Lengkap</label>
+            <input type="text" name="name" value="<%= userinfo.fullname %>" required>
+            <label for="email">Email</label>
+            <input type="text" name="email" value="<%= userinfo.email %>" required>
+            <h3>Alamat</h3>
+            <label for="address">Detail Alamat</label>
+            <input name="address" value="<%= userinfo.address.detail %>" required>
+            <label for="kelurahan" value="<%= userinfo.address.kelurahan %>">Kelurahan</label>
+            <input type="text" name="kelurahan" value="<%= userinfo.address.kelurahan %>" required>
+            <label for="kecamatan">Kecamatan</label>
+            <input type="text" name="kecamatan" value="<%= userinfo.address.kecamatan %>" required>
+            <label for="city">Kota</label>
+            <input type="text" name="city" value="<%= userinfo.address.city %>" required>
+
+
+
+            <button type="submit">Save</button>
+        </form>
+        <div class="purchases">
+            <div class="header">
+                <h3>Order List</h3>            
+            </div>
+            <div class="purchase-container">
+                <% userorders.map(order => { %>
+                
+                    <div class="purchase-wrapper" data-purchaseid="<%= order._id %>">
+                        <div class="purchase">
+                            <div class="purchase-section">
+                                <div>Order ID:</div>
+                                <div><%= order._id %></div>
+                            </div>
+                            <div class="purchase-section">
+                                <div>Tanggal Pemesanan:</div>
+                                <div> <%= order.date %></div>
+                            </div>
+                            <% order.item.map( cake => { %>
+                                <div class="purchase-section">
+                                    <div><%= cake.itemname %> : <%= cake.quantity %></div>
+                                    <div><% cake.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cake.totalprice) %> <%= cake.totalprice %> </div>
+                                </div>
+                            <% }) %>
+                            <div class="purchase-section">
+                                <div>Total : </div>
+                                <div><% order.total = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(order.total) %> <%= order.total %></div>
+                            </div>
+                            <div class="purchase-section">
+                                <div>Status Pembayaran : </div>
+                                <div class="paystatus"><%= order.status %></div>
+                            </div>
+                            <div class="purchase-section">
+                                <div>Bukti Pembayaran:</div>
+                            </div>
+                            <% if(order.bukti.filename){ %>
+                                <img src="data:<%= order.bukti.contentType %>;base64, <%= order.bukti.imgBase64 %>" alt="" class="buktiTf">
+                                <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    const infoForm = document.querySelector('.info')
+    const userid = window.location.href.split('/').pop()
+    const fullImg = document.querySelector('.fullImg')
+    infoForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const fullname = infoForm.name.value
+        const email = infoForm.email.value
+        const city = infoForm.city.value
+        const kecamatan = infoForm.kecamatan.value
+        const kelurahan = infoForm.kelurahan.value
+        const address = infoForm.address.value
+        const res = await fetch('/admin/user/updateuser', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({userid,fullname, email, city,kecamatan, kelurahan, address})
+        })
+        const data = await res.json()
+        console.log(data.sukses)
+        window.location.reload()
+    })
+    const purchases = document.querySelectorAll('.purchase-wrapper')
+    purchases.forEach(purchase => {
+        const statusButton = purchase.querySelector('.statusButton')
+        const deleteButton = purchase.querySelector('.deletepurchase')
+        const purchaseid = purchase.dataset.purchaseid
+        let paystatusEle = purchase.querySelector('.paystatus')
+        statusButton.addEventListener('click', async function(){
+            let paystatus = paystatusEle.innerHTML
+                if(paystatus == 'belum dibayar'){
+                    paystatus = 'sudah dibayar'
+                    statusButton.classList.add('confirmed')
+                }
+                else{
+                    paystatus = 'belum dibayar'
+                    statusButton.classList.remove('confirmed')
+                }
+            
+            // }
+            
+            console.log(paystatus)
+            const res = await fetch('/admin/user/updatepurchase', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userid, purchaseid, paystatus})
+                
+            })
+            const data = await res.json()
+            console.log(data)
+            if(data.sukses){
+                paystatusEle.innerHTML = paystatus
+            }
+            else{
+                console.log('Request gagal')
+            }
+        })
+        deleteButton.addEventListener('click', async function(){
+            const res = await fetch('/admin/user/deletepurchase', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userid, purchaseid})
+            })
+            const data = await res.json();
+            console.log(data)
+            window.location.reload();
+        })
+    });
+</script>

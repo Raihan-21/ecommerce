@@ -1,0 +1,76 @@
+<%- include('partials/header'); -%>
+<div class="container container-admin">
+    <%- include('partials/adminmenu'); -%>
+    <div class="admin-itemdesc">
+        <h3 style="margin-left: 1rem;">Item Data</h3>
+        <form class="itemimgform">
+            <div class="itemimg">
+                <label for="img">Product Picture</label>
+                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="" style="width: 10rem; height: 10rem;">
+            </div>
+            <div class="itemimgsubmit">
+                <input type="file" id="img" name="img" accept="image/*" required>
+                <button type="submit">Save</button>
+            </div>
+            
+        </form>
+        <form class="itemForm">
+            <label for="itemid">Item ID</label>
+            <input type="text" name="itemid" value="<%= item._id %>" disabled required>
+            <label for="itemname">Full Name</label>
+            <input type="text" name="itemname" value="<%= item.itemname %>" required>
+            <label for="category">Category</label>
+            <input type="text" name="category" value="<%= item.category %>" required>
+            <label for="price">Price</label>
+            <input type="text" name="price" value="<%= item.price %>" required>
+            <label for="desc">Description</label>
+            <textarea name="desc" id="" cols="30" rows="10" required><%= item.desc %></textarea>
+            <label for="quantity">Quantity</label>
+            <input type="text" name="quantity" value="<%= item.quantity %>" required>
+            <button type="submit">Save</button>
+    </div>
+    
+</div>
+
+<script>
+    const itemForm = document.querySelector('.itemForm')
+    itemForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const itemid = itemForm.itemid.value 
+        const itemname = itemForm.itemname.value
+        const category = itemForm.category.value 
+        const price = itemForm.price.value 
+        const desc = itemForm.desc.value 
+        const quantity = itemForm.quantity.value 
+        console.log(itemid)
+        // const formData = new FormData();
+        // formData.append('itemid', itemForm.itemid.value )
+        // formData.append('itemname', itemForm.itemname.value)
+        // formData.append('category', itemForm.category.value )
+        // formData.append('price', itemForm.price.value )
+        // formData.append('desc', itemForm.desc.value )
+        // formData.append('quantity', itemForm.quantity.value )
+        const res = await fetch('/admin/item/updateitem', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({itemid, itemname, category, price, desc, quantity})
+            })
+            const data = await res.json()
+            console.log(data.item)
+            window.location.reload()
+    })
+    const itemImg = document.querySelector('.itemimgform')
+    itemImg.addEventListener('submit', async function(e){
+        e.preventDefault()
+        const formData = new FormData()
+        formData.append('itemid', itemForm.itemid.value )
+        formData.append('image', itemImg.img.files[0])
+        const res = await fetch('/admin/item/updateitemimg', {
+            method: 'PUT',
+            body: formData
+            })
+            const data = await res.json()
+            console.log(data.status)
+            window.location.reload()
+    })
+</script>

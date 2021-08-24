@@ -1,0 +1,44 @@
+<%- include('partials/header'); -%>
+<div class="container container-profile">
+    <%- include('partials/profilemenu'); -%>
+    <form action="" class="info">
+        <h3>Data diri</h3>
+        <label for="name">Nama Lengkap</label>
+        <input type="text" name="name" value="<%= user.fullname %>" required>
+        <label for="email">Email</label>
+        <input type="text" name="email" value="<%= user.email %>" required>
+        <h3>Alamat</h3>
+        <label for="address">Detail Alamat</label>
+        <input name="address" id="" value="<%= user.address.detail %>" required>
+        <label for="kelurahan" value="<%= user.address.kelurahan %>">Kelurahan</label>
+        <input type="text" name="kelurahan" value="<%= user.address.kelurahan %>" required>
+        <label for="kecamatan">Kecamatan</label>
+        <input type="text" name="kecamatan" value="<%= user.address.kecamatan %>" required>
+        <label for="city">Kota</label>
+        <input type="text" name="city" value="<%= user.address.city %>" required>
+
+
+
+        <button type="submit">Save</button>
+    </form>
+</div>
+<script>
+    const infoForm = document.querySelector('.info')
+    infoForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const fullname = infoForm.name.value
+        const email = infoForm.email.value
+        const city = infoForm.city.value
+        const kecamatan = infoForm.kecamatan.value
+        const kelurahan = infoForm.kelurahan.value
+        const address = infoForm.address.value
+        const res = await fetch('/profile', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({fullname, email, city,kecamatan, kelurahan, address})
+        })
+        const data = await res.json()
+        console.log(data.sukses)
+        window.location.reload()
+    })
+</script>
