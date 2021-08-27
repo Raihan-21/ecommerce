@@ -567,6 +567,26 @@ table{
   font-weight: bold;
   font-size: 1.8rem;
 }
+.categories form{
+  display: flex;
+  width: fit-content;
+  margin: 0 0 0 1rem;
+  padding: 0;
+  background: #fab638;
+  box-shadow: none;
+  
+}
+.categories form input{
+  cursor: pointer;
+  width: fit-content;
+  padding: .5rem 1rem;
+  border-radius: 1rem;
+  background: #fab638;
+  box-shadow: 1px 0px 1px 1px white;
+}
+.categories form > input{
+  margin-right: 1rem;
+}
 .categories .selected{
   background-color: white;
 }

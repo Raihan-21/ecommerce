@@ -9,7 +9,7 @@
 <body>
   <nav>
     <h1><a href="/">Innoraine Cake</a></h1>
-    <form action="/search"  class="search">
+    <form action="/catalogue"  class="search">
       <input type="text" name="itemname">
       <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
     </form>
@@ -17,7 +17,7 @@
       <% if(user) { %>
         <li><a href="/cart"><i class="fas fa-shopping-cart"></i></a></li>
         <% if(total){ %>
-          <li class="cartPopup"><%= total.quantity %></li>
+          <li class="cartPopup"><%= total %></li>
         <% } else{ %>
           <li class="cartPopup noitem"></li>
         <% } %>

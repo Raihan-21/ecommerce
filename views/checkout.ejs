@@ -19,7 +19,7 @@
     </div>
     <div class="payment">
         <div class="itemwrap">
-        <% user.inventory.map(item => { %>
+        <% cart.items.map(item => { %>
             <div class="item" data-id="<%= item._id %>">
                 <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
                 <div class="itemdetails">
@@ -36,8 +36,8 @@
         </div>
         <div class="total">
             <h3>Detail Belanja</h3>
-            <p class="totalqty">Total Barang: <%= total.quantity %></p>
-            <p class="totalprice"><% total.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total.totalprice) %> Total Harga: <%= total.totalprice %></p>
+            <p class="totalqty">Total Barang: <%= cart.totalquantity %></p>
+            <p class="totalprice"><% const totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cart.totalprice) %> Total Harga: <%= totalprice %></p>
             <button class="back">Back</button>
             <button class="cancel">Cancel</button>
             <button class="pay">Pay</button>

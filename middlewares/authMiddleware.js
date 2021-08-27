@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken')
 const Customer = require('../models/User')
 const Item = require('../models/Items')
+const Cart = require('../models/Carts')
 const multer = require('multer')
+const { cart } = require('../controllers/authController')
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -42,12 +44,11 @@ const checkUser = (req, res, next) => {
             }
             else{
                 const user = await Customer.findById(decodedToken.id)
+                const cart = await Cart.findOne({userid: user._id})
                 req.user = user
-                if(user.inventory.length !== 0){
-                    const total = user.inventory.reduce((curr, acc) => {
-                        return {quantity: curr.quantity + acc.quantity, totalprice: curr.totalprice + acc.totalprice}
-                        
-                    })
+                req.cart = cart
+                if(cart.items.length !== 0){
+                    const total = cart.totalquantity
                     res.locals.total = total
                 }
                 else{

@@ -2,10 +2,12 @@ const Customer = require('../models/User')
 const jwt = require('jsonwebtoken')
 const Item = require('../models/Items')
 const Order = require('../models/Orders')
+const Cart = require('../models/Carts')
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer')
 const fs = require('fs');
 const { ObjectId } = require('mongoose');
+const { findOne } = require('../models/User')
 
 const handleError = (err) => {
     if(err.message.includes('item validation failed')){
@@ -50,7 +52,7 @@ const adminToken = (id) => {
 }
 const modifyQty = async (userid, itemid, inc, price) => {
     const takeItem = await Item.findOneAndUpdate({_id: itemid}, {$inc: {quantity: -inc}})
-    const add = await Customer.findOneAndUpdate({_id: userid, "inventory._id": mongoose.Types.ObjectId(itemid)}, {$inc: { "inventory.$.quantity": inc, "inventory.$.totalprice": price}})
+    const add = await Cart.findOneAndUpdate({userid, "items._id": mongoose.Types.ObjectId(itemid)}, {$inc: { "items.$.quantity": inc, "items.$.totalprice": price, totalquantity: inc, totalprice: price}})
 }
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -123,11 +125,13 @@ module.exports.adminlogin_post = (req, res) => {
 }
 
 module.exports.adminuser = async (req, res) => {
-    const users = await Customer.find({})
+    let users = await Customer.find({})
+    users = users.sort((a,b) => a.email.localeCompare(b.email, 'en', {sensitivity: 'base'}))
     res.render('adminuser', {users})
 }
 module.exports.adminitem = async (req, res) => {
-    const items = await Item.find({})
+    let items = await Item.find({})
+    items = items.sort((a,b) => a.itemname.localeCompare(b.itemname, 'en', {sensitivity: 'base'}))
     res.render('adminitem', {items})
 }
 module.exports.adminorder = async (req, res) => {
@@ -201,21 +205,32 @@ module.exports.admin_logout = (req, res) => {
     res.redirect('/admin/login')
 }
 module.exports.catalogue = async (req, res) => {
-    const items = await Item.find({})
-    const category = null
-    res.render('catalogue', {items, category})
-}
-module.exports.category = async (req, res) => {
-    const category = req.params.category
-    const items = await Item.find({category })
-    res.render('catalogue', {items, category})
-}
-
-module.exports.search_get = async (req, res) => {
     const itemname = req.query.itemname
-    const items = await Item.find({itemname: new RegExp(itemname, 'i')})
-    res.render('catalogue', {items,category: null})
+    const category = req.query.category
+    if(category == 'all'){
+        const items = await Item.find({itemname: new RegExp(itemname, 'i')})
+        res.render('catalogue', {items, category})
+    }
+    else if(category == 'Cake' || category == 'Frozen Food'){
+        const items = await Item.find({itemname: new RegExp(itemname, 'i'), category})
+        res.render('catalogue', {items, category})
+    }
+    else{
+        const items = await Item.find({itemname: new RegExp(itemname, 'i')})
+        res.render('catalogue', {items, category})
+    }
 }
+// module.exports.category = async (req, res) => {
+//     const category = req.params.category
+//     const items = await Item.find({category })
+//     res.render('catalogue', {items, category})
+// }
+
+// module.exports.search_get = async (req, res) => {
+//     const itemname = req.query.itemname
+//     const items = await Item.find({itemname: new RegExp(itemname, 'i')})
+//     res.render('catalogue', {items,category: null})
+// }
 module.exports.add_get = (req, res) => {
     res.render('inputitem')
 }
@@ -249,7 +264,8 @@ module.exports.addCart = async (req, res) => {
     const user = req.user
     const item = req.item
     const takeItem = await Item.findOneAndUpdate({_id: item._id}, {$inc: {quantity: -qty}})
-    const add = await Customer.findOneAndUpdate({_id: user._id}, {$push: { inventory: {
+    const totalprice = takeItem.price * qty
+    const cartItem = {
         _id: takeItem._id,
         itemname: takeItem.itemname,
         image: {
@@ -258,8 +274,21 @@ module.exports.addCart = async (req, res) => {
         },
         price: takeItem.price,
         quantity: qty,
-        totalprice: takeItem.price * qty
-    }}})
+        totalprice: totalprice
+    }
+    const addItem = await Cart.updateOne({userid: user._id}, {$push: {items: cartItem}, $inc: {totalprice, totalquantity: qty}}, {upsert: true})
+    // const additem = await Cart.create({userid: user._id, items: cartItem})
+    // const add = await Customer.findOneAndUpdate({_id: user._id}, {$push: { inventory: {
+    //     _id: takeItem._id,
+    //     itemname: takeItem.itemname,
+    //     image: {
+    //         imgBase64: takeItem.image.imgBase64,
+    //         contentType: takeItem.image.contentType
+    //     },
+    //     price: takeItem.price,
+    //     quantity: qty,
+    //     totalprice: takeItem.price * qty
+    // }}})
     
     res.json({sukses: 'Barang dimasukkan dalam keranjang'})
 }
@@ -274,17 +303,20 @@ module.exports.profile_update = async (req, res) => {
 
     res.json({sukses: 'hadeh'})
 }
-module.exports.cart = (req, res) => {
+module.exports.cart = async (req, res) => {
     const user = req.user
-    if(user.inventory.length !== 0){
-        const total = user.inventory.reduce((curr, acc) => {
-            return {quantity: curr.quantity + acc.quantity, totalprice: curr.totalprice + acc.totalprice}
-        })
-        res.render('cart', {user,category: null, total})
-    }
-    else{
-        res.render('cart', {user,category: null, total: null})
-    }
+    const cart = req.cart
+    // if(cart.items.length !== 0){
+    //     const total = req.total
+    //     // const total = cart.items.reduce((curr, acc) => {
+    //     //     return {quantity: curr.quantity + acc.quantity, totalprice: curr.totalprice + acc.totalprice}
+    //     // })
+    //     res.render('cart', {cart,category: null, total})
+    // }
+    // else{
+    //     res.render('cart', {cart,category: null, total: null})
+    // }
+    res.render('cart', {cart,category: null})
 }
 module.exports.modifyCart = async (req, res) => {
     let {itemid, modType, qty} = req.body
@@ -302,8 +334,9 @@ module.exports.modifyCart = async (req, res) => {
 module.exports.removeItem = async (req, res) => {
     const user = req.user
     const { itemid, qty } = req.body
+    const item = await Cart.findOne({userid: user._id}, {items: {$elemMatch: { _id: mongoose.Types.ObjectId(itemid)}}} )
     const storeItem = await Item.findOneAndUpdate({_id: itemid}, {$inc: {quantity: qty}})
-    const remove = await Customer.findByIdAndUpdate(user._id, { $pull: {inventory: {_id: mongoose.Types.ObjectId(itemid)}}})
+    const remove = await Cart.findOneAndUpdate({userid: user._id}, { $pull: {items: {_id: mongoose.Types.ObjectId(itemid)}}, $inc: {totalquantity: -item.items[0].quantity, totalprice: -item.items[0].totalprice}})
     res.json({status: 'item dihapus'})
 }
 
@@ -313,14 +346,17 @@ module.exports.getUpdatedCart = (req, res) => {
 }
 
 module.exports.checkout_get = async (req, res) => {
-    res.render('checkout')
+    const cart = req.cart
+    res.render('checkout', {cart})
 }
 module.exports.checkout = async (req, res) => {
     const user = req.user
+    const cart = req.cart
+    // const total = req.total
     const {date,nama, kota, kecamatan, kelurahan, alamat} = req.body
-    const total = user.inventory.reduce((curr, acc) => {
-        return {totalprice: curr.totalprice + acc.totalprice}}, {totalprice: 0})
-        const item = user.inventory.map(item => {
+    // const total = cart.items.reduce((curr, acc) => {
+    //     return {totalprice: curr.totalprice + acc.totalprice}}, {totalprice: 0})
+        const item = cart.items.map(item => {
                     return {
                         _id: item._id,
                         itemname: item.itemname,
@@ -350,8 +386,8 @@ module.exports.checkout = async (req, res) => {
     // const checkout = await Customer.findByIdAndUpdate(user._id, { $set: {inventory: []}, $push: {orders: 
     //     receipt
     // }})
-    const checkout = await Customer.findByIdAndUpdate(user._id, {$set: {inventory: []}})
-    const order = await Order.create({date,userid: user._id, receiver: nama, kota, kecamatan, kelurahan, detailalamat: alamat, item,total: total.totalprice, status: "Belum Dibayar"})
+    const checkout = await Cart.findOneAndUpdate({userid: user._id}, {$set: {items: [], totalquantity: 0, totalprice: 0}})
+    const order = await Order.create({date,userid: user._id, receiver: nama, kota, kecamatan, kelurahan, detailalamat: alamat, item,total: cart.totalprice, status: "Belum Dibayar"})
     const adminOptions = {
         from    : "jackrabbid45@gmail.com",
         to      : "muhammadraihan118@gmail.com",
@@ -362,13 +398,13 @@ module.exports.checkout = async (req, res) => {
                     <div>Kota    : ${kota}</div>
                     <div>Kota    : ${kota}</div>
                     <div>Alamat  : ${alamat}</div>
-                    <div>Item    : ${user.inventory.map(item => {
+                    <div>Item    : ${cart.items.map(item => {
                         return `
                         <div>${item.itemname} x ${item.quantity}  : ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price)} </div>
                         `
 
                         })}</div>
-                    <div>Total   : ${total.totalprice}</div> `
+                    <div>Total   : ${cart.totalprice}</div> `
     }
     const clientOptions = {
         from    : "jackrabbid45@gmail.com",
@@ -377,12 +413,12 @@ module.exports.checkout = async (req, res) => {
         html    : `<h2>Anda baru saja melakukan pembelian dengan detail : </h2>
                     <div>Kota    : ${kota}</div>
                     <div>Alamat  : ${alamat}</div>
-                    <div>Item    : ${user.inventory.map(item => {
+                    <div>Item    : ${cart.items.map(item => {
                         return `
                         <div>${item.itemname} x ${item.quantity}  : ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price)} </div>
                         `
                         })}</div>
-                    <div>Total   : ${total.totalprice}</div>
+                    <div>Total   : ${cart.totalprice}</div>
                     <h1> Harap dibayar dalam kurun waktu 3 hari</h1> 
                     <h3> kirimkan bukti pembayaran melalui email ini </h3>
         `

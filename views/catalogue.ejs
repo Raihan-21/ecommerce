@@ -2,7 +2,27 @@
 <div class="container container-catalogue">
     <div class="categories">
         <div>Categories:</div>
-        <a href="/categories/cakes" class=" <% if (category === 'cakes') { %>
+        <form action="/catalogue">
+            <input type="button" onclick="window.location.href = '/catalogue'" value="All" class="<% if(!category) { %>
+            selected
+            <% } else { %>
+                ''
+            <% } %>
+            ">
+            <input type="submit" value="Cake" name="category" class="<% if(category == 'Cake') { %>
+                selected
+                <% } else { %>
+                    ''
+                <% } %>
+                ">
+            <input type="submit" value="Frozen Food" name="category" class="<% if(category == 'Frozen Food') { %>
+                selected
+                <% } else { %>
+                    ''
+                <% } %>
+                ">
+        </form>
+        <!-- <a href="/categories/cakes" class=" <% if (category === 'cakes') { %>
         selected
     <%} else { %>
         ''
@@ -11,10 +31,11 @@
         selected
     <%} else { %>
         ''
-        <% } %>">Frozen Food</a>
+        <% } %>">Frozen Food</a> -->
     </div>
     <div class="catalogue">
-        <% items.map(item => { %>
+        <% items = items.sort((a, b) => a.itemname.localeCompare(b.itemname, 'en', {sensitivity: 'base'}))
+        items.map(item => { %>
             <a href="/item/<%= item._id %>" class="item" >
                 <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
                 <div ><h2 class="itemname"><%=item.itemname %></h2></div>
@@ -23,9 +44,9 @@
             </a>
             
         <% }) %>
-        <% if (items == false) { %>
+        <!-- <% if (items == false) { %>
             <div class="nomatch">There is no match for your input</div>
-            <% } %>
+            <% } %> -->
     </div>
 </div>
 <script>

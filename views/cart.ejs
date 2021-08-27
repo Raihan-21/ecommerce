@@ -1,9 +1,9 @@
 <%- include('partials/header'); -%>
-<div class="container cart">
-    <% if (user.inventory.length !== 0) { %>
+<div style="margin-bottom: 2rem;" class="container cart">
+    <% if (cart.items.length !== 0) { %>
         <div class="itemwrap">
             <h2>Cart</h2>
-        <% user.inventory.map(item => { %>
+        <% cart.items.map(item => { %>
             <div class="item" data-id="<%= item._id %>">
                 <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
                 <div class="itemdetails">
@@ -25,8 +25,8 @@
 
         <div class="total">
             <h3>Detail Belanja</h3>
-            <p class="totalqty">Total Barang: <%= total.quantity %></p>
-            <p class="totalprice"><% total.totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total.totalprice) %> Total Harga: <%= total.totalprice %></p>
+            <p class="totalqty">Total Barang: <%= cart.totalquantity %></p>
+            <p class="totalprice"><%const totalprice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(cart.totalprice) %> Total Harga: <%= totalprice %></p>
         </div>
     <% } else { %>
         <h3 class="empty">Tidak ada barang dalam keranjang</h3>
