@@ -34,7 +34,7 @@
         <% } %>">Frozen Food</a> -->
     </div>
     <div class="catalogue">
-        <% items = items.sort((a, b) => a.itemname.localeCompare(b.itemname, 'en', {sensitivity: 'base'}))
+        <% 
         items.map(item => { %>
             <a href="/item/<%= item._id %>" class="item" >
                 <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">

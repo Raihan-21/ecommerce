@@ -22,7 +22,6 @@
         const email = login.email.value
         const password = login.password.value
 
-        try {
             const res = await fetch('/login',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -45,9 +44,6 @@
                 emailError.innerHTML = ''
                 passwordError.innerHTML = ''
             }
-        } 
-        catch (err) {
-            console.log(err)
-        }
+
     })
 </script>

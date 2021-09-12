@@ -125,13 +125,11 @@ module.exports.adminlogin_post = (req, res) => {
 }
 
 module.exports.adminuser = async (req, res) => {
-    let users = await Customer.find({})
-    users = users.sort((a,b) => a.email.localeCompare(b.email, 'en', {sensitivity: 'base'}))
+    const users = await Customer.find({}).sort({"email": 1})
     res.render('adminuser', {users})
 }
 module.exports.adminitem = async (req, res) => {
-    let items = await Item.find({})
-    items = items.sort((a,b) => a.itemname.localeCompare(b.itemname, 'en', {sensitivity: 'base'}))
+    const items = await Item.find({}).sort({"itemname": 1})
     res.render('adminitem', {items})
 }
 module.exports.adminorder = async (req, res) => {
@@ -207,18 +205,15 @@ module.exports.admin_logout = (req, res) => {
 module.exports.catalogue = async (req, res) => {
     const itemname = req.query.itemname
     const category = req.query.category
-    if(category == 'all'){
-        const items = await Item.find({itemname: new RegExp(itemname, 'i')})
-        res.render('catalogue', {items, category})
-    }
-    else if(category == 'Cake' || category == 'Frozen Food'){
-        const items = await Item.find({itemname: new RegExp(itemname, 'i'), category})
+    if(category){
+        const items = await Item.find({itemname: new RegExp(itemname, 'i'), category}).sort({"itemname": 1})
         res.render('catalogue', {items, category})
     }
     else{
-        const items = await Item.find({itemname: new RegExp(itemname, 'i')})
+        const items = await Item.find({itemname: new RegExp(itemname, 'i')}).sort({"itemname": 1})
         res.render('catalogue', {items, category})
     }
+
 }
 // module.exports.category = async (req, res) => {
 //     const category = req.params.category

@@ -24,7 +24,7 @@
             </tr>
             <% items.map( item => { %>
                 <tr class="itemrow" data-itemid="<%= item._id %>">
-                    <td><a href="/admin/item/details/<%= item._id %>" class="itemcontainer"><%=item.itemname %></a></td>
+                    <td><%=item.itemname %></a></td>
                     <td><%= item.category %></td>
                     <td><%= item.price %></td>
                     <td><%= item.quantity %></td>

@@ -273,14 +273,14 @@ header .btn{
   margin: .5rem;
 }
 .userList{
-  margin: .5rem;
+  margin: 4.3rem .5rem;
   flex: 1;
 }
-.userwrap{
+/* .userwrap{
   display: flex;
   justify-content: space-between;
   padding: .5rem;
-}
+} */
 .itemwrap{
   display: flex;
   justify-content: space-between;
@@ -320,10 +320,21 @@ table{
   border: 1px solid black;
 }
 .bottomList td{
-  padding-left: 1rem;
+  padding: 0 1rem;
   font-weight: 500;
 }
 .bottomList .itemrow button{
+  margin: .2rem;
+  font-size: .7rem;
+}
+.userList td, .userList th{
+  border: 1px solid black;
+}
+.userList td{
+  padding: 0 1rem;
+  font-weight: 500;
+}
+.userList button{
   margin: .2rem;
   font-size: .7rem;
 }

@@ -2,14 +2,34 @@
 <div class="container container-admin">
     <%- include('partials/adminmenu'); -%>
     <div class="userList">
-        <h3>Email:</h3>
+        <table style="width: 100%;">
+            <tr>
+                <th>Email</th>
+                <th>Fullname</th>
+                <th>Address</th>
+                <th>Edit</th>
+            </tr>
+            
+            <% users.map( user => { %>
+                <tr data-userid="<%= user._id %>">
+                    <td><%=user.email %></td>
+                    <td><%=user.fullname %></td>
+                    <td><%=user.address.detail %></td>
+                    <!-- <a href="/admin/user/details/<%= user._id %>" class="usercontainer"><%=user.email %></a> -->
+                    <td style="display: flex;">
+                        <a href="/admin/user/details/<%= user._id %>"><button>Edit</button></a>
+                        <button class="deleteitem">Delete</button>
+                    </td>   
+                </tr>
+            <% }) %>
+        <!-- <h3>Email:</h3>
             <% users.map( user => { %>
                 <div class="userwrap" data-userid="<%= user._id %>">
                 <a href="/admin/user/details/<%= user._id %>" class="usercontainer"><%=user.email %></a>
                 <button class="deleteitem">Delete</button>   
                 </div>
-            <% }) %>
-        
+            <% }) %> -->
+        </table>
     </div>
 </div>
 <script>
