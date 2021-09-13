@@ -286,9 +286,12 @@ header .btn{
   justify-content: space-between;
   padding: .5rem;
 }
-.bottomList .itemwrap button, .userwrap button{
+.bottomList .itemwrap button{
   margin: 0;
   opacity: 0;
+}
+.userwrap button{
+  margin: 0;
 }
 .container-admin button{
   margin-top: none;
@@ -307,10 +310,10 @@ header .btn{
   padding: .5rem;
 }
 
-.bottomList .itemwrap:hover, .userwrap:hover{
+.bottomList .itemwrap:hover{
   background-color: lightgray;
 }
-.bottomList .itemwrap:hover button, .userwrap:hover button{
+.bottomList .itemwrap:hover button{
   opacity: 1;
 }
 table{
@@ -443,6 +446,7 @@ table{
   z-index: -1;
 }
 .account{
+  z-index: 1;
   display: flex;
   align-items: flex-end;
   position: relative;

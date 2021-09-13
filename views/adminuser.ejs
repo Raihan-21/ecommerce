@@ -11,7 +11,7 @@
             </tr>
             
             <% users.map( user => { %>
-                <tr data-userid="<%= user._id %>">
+                <tr class="userwrap" data-userid="<%= user._id %>">
                     <td><%=user.email %></td>
                     <td><%=user.fullname %></td>
                     <td><%=user.address.detail %></td>
