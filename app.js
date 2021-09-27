@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/authRoutes')
+const mainRoutes = require('./routes/mainRoutes')
 const cookieParser = require('cookie-parser')
-const {verifyAuth, checkUser} = require('./middlewares/authMiddleware')
+const {verifyAuth, checkUser} = require('./middlewares/mainMiddleware')
 const app = express();
 
 
@@ -13,8 +13,7 @@ app.use(cookieParser())
 app.set('view engine', 'ejs');
 
 // database connection
-// password iKeEZyWrdCzvu8UY
-const dbURI = 'mongodb+srv://raihan:iKeEZyWrdCzvu8UY@cluster0.dyuhm.mongodb.net/JWT?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://raihan:iKeEZyWrdCzvu8UY@cluster0.dyuhm.mongodb.net/ecommerce?retryWrites=true&w=majority';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify: false })
   .then((result) => {
     console.log('connected')
@@ -29,4 +28,4 @@ app.use(express.urlencoded({extended: false}))
 // app.get('*', checkUser)
 app.use(checkUser)
 app.get('/', (req, res) => res.render('home'));
-app.use(authRoutes)
+app.use(mainRoutes)

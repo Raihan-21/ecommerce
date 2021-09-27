@@ -3,11 +3,10 @@ const Customer = require('../models/User')
 const Item = require('../models/Items')
 const Cart = require('../models/Carts')
 const multer = require('multer')
-const { cart } = require('../controllers/authController')
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
-        cb(null, 'uploads')
+        cb(null, 'public/img')
     },
     filename: function(req, file, cb){
         const ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
@@ -47,13 +46,19 @@ const checkUser = (req, res, next) => {
                 const cart = await Cart.findOne({userid: user._id})
                 req.user = user
                 req.cart = cart
-                if(cart.items.length !== 0){
-                    const total = cart.totalquantity
-                    res.locals.total = total
+                if(cart){
+                    if(cart.items.length !== 0){
+                        const total = cart.totalquantity
+                        res.locals.total = total
+                    }
+                    else{
+                        res.locals.total = null
+                    }
                 }
                 else{
                     res.locals.total = null
                 }
+
                 res.locals.user = user
                 
                 next()
