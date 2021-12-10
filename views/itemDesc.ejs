@@ -1,7 +1,7 @@
 <%- include('partials/header'); -%>
 <div class="container container-itemdesc" data-id="<%= item._id %>">
     <div class="itemdesc">
-        <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+        <img src="/img/<%=item.image%>" alt="">
         <div class="details">
             <h2><%= item.itemname %></h2>
             <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> <%= price %></div>

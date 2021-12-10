@@ -37,7 +37,7 @@
         <% 
         items.map(item => { %>
             <a href="/item/<%= item._id %>" class="item" >
-                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+                <img src="/img/<%= item.image %>" alt="">
                 <div ><h2 class="itemname"><%=item.itemname %></h2></div>
                 <div class="price"><% const price = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price) %> <%= price %></div>
                 <div class="desc">Order now!</div>
