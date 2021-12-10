@@ -21,7 +21,7 @@
         <div class="itemwrap">
         <% cart.items.map(item => { %>
             <div class="item" data-id="<%= item._id %>">
-                <img src="data:<%= item.image.contentType %>;base64, <%= item.image.imgBase64 %>" alt="">
+                <img src="/img/<%= item.image %>" alt="">
                 <div class="itemdetails">
                     <a href="/item/<%= item._id %>" class="itemname"><%= item.itemname %></a>
                     <div class="upper">

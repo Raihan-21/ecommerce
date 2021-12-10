@@ -310,10 +310,7 @@ module.exports.addCart = async (req, res) => {
   const cartItem = {
     _id: takeItem._id,
     itemname: takeItem.itemname,
-    image: {
-      imgBase64: takeItem.image.imgBase64,
-      contentType: takeItem.image.contentType,
-    },
+    image: takeItem.image,
     price: takeItem.price,
     quantity: qty,
     totalprice: totalprice,
